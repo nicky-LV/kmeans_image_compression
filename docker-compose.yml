@@ -12,7 +12,9 @@ services:
   frontend:
     build: frontend
     command: npm run dev
+
     volumes:
+      - ./api/output_images:/app/public/output_images
       - ./frontend:/app
 
     ports:
