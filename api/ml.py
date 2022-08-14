@@ -1,18 +1,30 @@
+import os.path
+
 import numpy as np
 from sklearn.cluster import KMeans
 from skimage import io
 
 
-def k_means(filename: str):
+def k_means(filename: str, k: int):
+    """
+    Runs k-means algorithm on an image, converting it into k colours and saving it in the output_images dir.
+    :param filename: str - filename in input_images dir
+    :param k: int - value of k (num of colours)
+    :return: dict - {
+    filename: str,
+    height: int,
+    width: int,
+    size: int (bytes)
+    }
+    """
     # Load image
-    io.imsave()
     image = io.imread(f'./input_images/{filename}')
     rows, cols = image.shape[0], image.shape[1]
 
     # Flatten the image, represent it as 3-arrays of [R, G, B]
     image = np.array(image.reshape(rows * cols, 3))
 
-    km = KMeans(n_clusters=int(input("Number of colours (value of k):")))
+    km = KMeans(n_clusters=k)
     labels = km.fit_predict(image)
     centroids = km.cluster_centers_
 
@@ -28,7 +40,14 @@ def k_means(filename: str):
     print(image.shape)
 
     # Save image to output
-    io.imsave("./output_images/koala.jpeg", image)
+    io.imsave(f"./output_images/{filename}", image)
 
     # todo: there are a lot of repeated values in the image array, so use an algorithm like run length encoding to reduce the size!
     # todo: do the same thing but with a kmeans algorithm from scratch
+
+    return {
+        "filename": filename,
+        "height": rows,
+        "width": cols,
+        "size": os.path.getsize(f"./output_images/{filename}")
+    }

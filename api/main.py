@@ -1,6 +1,8 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
 from utils import *
+from ml import k_means
+
 
 app = FastAPI()
 
@@ -16,6 +18,21 @@ app.add_middleware(
 
 
 @app.post("/uploadImage")
-async def upload_image(file: UploadFile):
+async def upload_image(file: UploadFile, response: Response):
     # Saves the image
-    save_image(file.file.read(), file.filename)
+    filename = file.filename
+    save_image(file.file.read(), filename)
+
+    # todo: make k user controllable
+    k = 2
+
+    # Process image
+    stats: dict = k_means(filename, k)
+
+    # note: size is in bytes
+    return {
+        "filename": filename,
+        "height": stats["height"],
+        "width": stats["width"],
+        "size": stats["size"]
+    }
