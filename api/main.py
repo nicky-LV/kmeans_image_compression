@@ -17,14 +17,11 @@ app.add_middleware(
 )
 
 
-@app.post("/uploadImage")
-async def upload_image(file: UploadFile, response: Response):
+@app.post("/uploadImage/{k}")
+async def upload_image(k: int, file: UploadFile, response: Response):
     # Saves the image
     filename = file.filename
     save_image(file.file.read(), filename)
-
-    # todo: make k user controllable
-    k = 2
 
     # Process image
     stats: dict = k_means(filename, k)
